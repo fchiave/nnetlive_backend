@@ -12,4 +12,4 @@ app.include_router(nn_routes.router)
 
 @app.get("/")
 def root():
-    return {"message": "Welcome to the FastAPI + NumPy example!"}
+    return {"message": "Welcome to NeuralNetLive Drawing!"}
