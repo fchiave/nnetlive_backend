@@ -1,6 +1,5 @@
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
-from starlette.websockets import WebSocketDisconnect
 
 from app.routers import nn_routes
 
@@ -13,6 +12,7 @@ app = FastAPI(
 
 # Register your routes
 app.include_router(nn_routes.router)
+
 
 # Simple test UI for the websocket
 html = """
@@ -44,24 +44,3 @@ html = """
 @app.get("/")
 async def get():
     return HTMLResponse(html)
-
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    # Accept the connection
-    await websocket.accept()
-    print("Client connected")
-    try:
-        # Keep the connection open to receive/send messages
-        while True:
-            data = await websocket.receive_text()
-            print(f"Received message from client: {data}")
-
-            predictions = {
-                "p1": {"label": "cat", "confidence": 0.85},
-                "p2": {"label": "dog", "confidence": 0.10},
-                "p3": {"label": "rabbit", "confidence": 0.05}
-            }
-
-            await websocket.send_text(json.dumps(predictions))
-    except WebSocketDisconnect:
-        print("Client disconnected")
