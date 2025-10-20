@@ -4,6 +4,7 @@ from starlette.websockets import WebSocketDisconnect
 
 from app.routers import nn_routes
 
+import json
 app = FastAPI(
     title="NeuralNetLive Drawing",
     description="A project that hosts live model prediction based on user-drawn images",
@@ -54,6 +55,13 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             data = await websocket.receive_text()
             print(f"Received message from client: {data}")
-            await websocket.send_text(f"Server received: {data}")
+
+            predictions = {
+                "p1": {"label": "cat", "confidence": 0.85},
+                "p2": {"label": "dog", "confidence": 0.10},
+                "p3": {"label": "rabbit", "confidence": 0.05}
+            }
+
+            await websocket.send_text(json.dumps(predictions))
     except WebSocketDisconnect:
         print("Client disconnected")
